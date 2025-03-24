@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import CalculatorDisplay from "@/components/CalculatorDisplay";
 import CalculatorKeypad from "@/components/CalculatorKeypad";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { calculateTrigFunction, calculateAdvancedFunction } from "@/utils/advancedMath";
 
 interface CalculatorProps {
   className?: string;
@@ -16,6 +16,7 @@ type CalculatorState = {
   waitingForOperand: boolean;
   previousValue: string | null;
   expression: string;
+  isAdvancedMode: boolean;
 };
 
 const Calculator: React.FC<CalculatorProps> = ({ className }) => {
@@ -25,8 +26,16 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
     operator: null,
     waitingForOperand: false,
     previousValue: null,
-    expression: ""
+    expression: "",
+    isAdvancedMode: false
   });
+
+  const toggleAdvancedMode = () => {
+    setState(prevState => ({
+      ...prevState,
+      isAdvancedMode: !prevState.isAdvancedMode
+    }));
+  };
 
   const handleKeyPress = (key: string) => {
     switch (key) {
@@ -62,6 +71,26 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
         break;
       case "%":
         inputPercent();
+        break;
+      case "ADV":
+        toggleAdvancedMode();
+        break;
+      case "sin":
+      case "cos":
+      case "tan":
+      case "asin":
+      case "acos":
+      case "atan":
+        applyTrigFunction(key);
+        break;
+      case "sqrt":
+      case "log":
+      case "ln":
+      case "exp":
+      case "pow2":
+      case "pow3":
+      case "1/x":
+        applyAdvancedFunction(key);
         break;
       default:
         break;
@@ -111,7 +140,6 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
   const inputOperator = (nextOperator: string) => {
     const { displayValue, operator, value, previousValue, waitingForOperand } = state;
 
-    // Convert string representations to their actual operator symbols
     const getOperator = (op: string) => {
       switch (op) {
         case "×": return "*";
@@ -153,7 +181,6 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
 
     if (operator) {
       try {
-        // Safely evaluate the expression
         const actualOperator = getOperator(operator);
         newValue = eval(`${parseFloat(previousValue || "0")} ${actualOperator} ${currentValue}`);
         
@@ -188,7 +215,6 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       return;
     }
 
-    // Convert string representations to their actual operator symbols
     const getOperator = (op: string) => {
       switch (op) {
         case "×": return "*";
@@ -202,7 +228,6 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       const actualOperator = getOperator(operator);
       let newValue;
 
-      // Safely evaluate the expression
       newValue = eval(`${parseFloat(previousValue)} ${actualOperator} ${currentValue}`);
       
       if (!isFinite(newValue)) {
@@ -268,7 +293,66 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
     });
   };
 
-  // Handle keyboard input
+  const applyTrigFunction = (func: string) => {
+    const { displayValue } = state;
+    const currentValue = parseFloat(displayValue);
+    
+    try {
+      const result = calculateTrigFunction(currentValue, func);
+      
+      if (!isFinite(result)) {
+        throw new Error("Invalid calculation");
+      }
+      
+      const stringResult = result.toString();
+      setState({
+        ...state,
+        displayValue: stringResult,
+        value: stringResult,
+        waitingForOperand: true,
+        expression: `${func}(${displayValue}) = ${stringResult}`
+      });
+    } catch (e) {
+      toast.error("Invalid input for function");
+      setState({
+        ...state,
+        displayValue: "Error",
+        value: "Error",
+        waitingForOperand: true
+      });
+    }
+  };
+
+  const applyAdvancedFunction = (func: string) => {
+    const { displayValue } = state;
+    const currentValue = parseFloat(displayValue);
+    
+    try {
+      const result = calculateAdvancedFunction(currentValue, func);
+      
+      if (!isFinite(result)) {
+        throw new Error("Invalid calculation");
+      }
+      
+      const stringResult = result.toString();
+      setState({
+        ...state,
+        displayValue: stringResult,
+        value: stringResult,
+        waitingForOperand: true,
+        expression: `${func === "pow2" ? "sqr" : func === "pow3" ? "cube" : func}(${displayValue}) = ${stringResult}`
+      });
+    } catch (e) {
+      toast.error("Invalid input for function");
+      setState({
+        ...state,
+        displayValue: "Error",
+        value: "Error",
+        waitingForOperand: true
+      });
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const { key } = event;
@@ -322,7 +406,10 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
         value={state.displayValue} 
         expression={state.expression} 
       />
-      <CalculatorKeypad onKeyPress={handleKeyPress} />
+      <CalculatorKeypad 
+        onKeyPress={handleKeyPress} 
+        isAdvancedMode={state.isAdvancedMode}
+      />
     </div>
   );
 };
