@@ -265,7 +265,8 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       operator: null,
       waitingForOperand: false,
       previousValue: null,
-      expression: ""
+      expression: "",
+      isAdvancedMode: state.isAdvancedMode
     });
   };
 
