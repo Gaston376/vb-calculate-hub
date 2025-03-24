@@ -56,9 +56,11 @@ export default {
 				calculator: {
 					display: 'hsl(220, 16%, 96%)',
 					keypad: 'hsl(0, 0%, 100%)',
-					operator: 'hsl(210, 100%, 97%)',
+					operator: 'hsl(39, 100%, 50%)',
 					equals: 'hsl(210, 100%, 50%)',
-					'equals-hover': 'hsl(210, 100%, 45%)'
+					'equals-hover': 'hsl(210, 100%, 45%)',
+					header: 'hsl(210, 100%, 50%)',
+					footer: 'hsl(210, 100%, 50%)'
 				}
 			},
 			borderRadius: {
@@ -107,9 +109,9 @@ export default {
 				'slide-up': 'slide-up 0.3s ease-out'
 			},
 			boxShadow: {
-				'calculator': '0 10px 30px rgba(0, 0, 0, 0.04), 0 0 8px rgba(0, 0, 0, 0.06)',
-				'key': '0 2px 4px rgba(0, 0, 0, 0.08)',
-				'key-pressed': '0 1px 2px rgba(0, 0, 0, 0.08)'
+				'calculator': '0 10px 30px rgba(0, 0, 0, 0.08), 0 0 8px rgba(0, 0, 0, 0.06)',
+				'key': '0 3px 6px rgba(0, 0, 0, 0.1)',
+				'key-pressed': '0 1px 3px rgba(0, 0, 0, 0.12)'
 			}
 		}
 	},

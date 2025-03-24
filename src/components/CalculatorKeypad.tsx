@@ -1,4 +1,3 @@
-
 import React from "react";
 import CalculatorKey from "@/components/CalculatorKey";
 import { cn } from "@/lib/utils";
@@ -102,35 +101,35 @@ const CalculatorKeypad: React.FC<CalculatorKeypadProps> = ({
   }
   
   return (
-    <div className={cn("calculator-keypad grid grid-cols-4 gap-1 p-1 bg-calculator-keypad", className)}>
+    <div className={cn("calculator-keypad grid grid-cols-4 gap-2 p-3 bg-calculator-keypad rounded-b-2xl", className)}>
       {/* Row 1 */}
-      <CalculatorKey value="AC" onClick={onKeyPress} type="function" />
-      <CalculatorKey value="±" onClick={onKeyPress} type="function" />
-      <CalculatorKey value="%" onClick={onKeyPress} type="function" />
-      <CalculatorKey value="÷" onClick={onKeyPress} type="operator" />
+      <CalculatorKey value="AC" onClick={onKeyPress} type="function" className="bg-red-500 text-white hover:bg-red-600" />
+      <CalculatorKey value="±" onClick={onKeyPress} type="function" className="bg-gray-200 hover:bg-gray-300" />
+      <CalculatorKey value="%" onClick={onKeyPress} type="function" className="bg-gray-200 hover:bg-gray-300" />
+      <CalculatorKey value="÷" onClick={onKeyPress} type="operator" className="bg-amber-500 text-white hover:bg-amber-600" />
       
       {/* Row 2 */}
-      <CalculatorKey value="7" onClick={onKeyPress} />
-      <CalculatorKey value="8" onClick={onKeyPress} />
-      <CalculatorKey value="9" onClick={onKeyPress} />
-      <CalculatorKey value="×" onClick={onKeyPress} type="operator" />
+      <CalculatorKey value="7" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="8" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="9" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="×" onClick={onKeyPress} type="operator" className="bg-amber-500 text-white hover:bg-amber-600" />
       
       {/* Row 3 */}
-      <CalculatorKey value="4" onClick={onKeyPress} />
-      <CalculatorKey value="5" onClick={onKeyPress} />
-      <CalculatorKey value="6" onClick={onKeyPress} />
-      <CalculatorKey value="-" onClick={onKeyPress} type="operator" />
+      <CalculatorKey value="4" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="5" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="6" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="-" onClick={onKeyPress} type="operator" className="bg-amber-500 text-white hover:bg-amber-600" />
       
       {/* Row 4 */}
-      <CalculatorKey value="1" onClick={onKeyPress} />
-      <CalculatorKey value="2" onClick={onKeyPress} />
-      <CalculatorKey value="3" onClick={onKeyPress} />
-      <CalculatorKey value="+" onClick={onKeyPress} type="operator" />
+      <CalculatorKey value="1" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="2" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="3" onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="+" onClick={onKeyPress} type="operator" className="bg-amber-500 text-white hover:bg-amber-600" />
       
       {/* Row 5 */}
-      <CalculatorKey value="0" onClick={onKeyPress} className="col-span-2" />
-      <CalculatorKey value="." onClick={onKeyPress} />
-      <CalculatorKey value="BASIC" onClick={onKeyPress} type="equals" ariaLabel="Advanced Mode" />
+      <CalculatorKey value="0" onClick={onKeyPress} className="col-span-2 bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="." onClick={onKeyPress} className="bg-white hover:bg-gray-100 text-gray-800 font-medium" />
+      <CalculatorKey value="=" onClick={onKeyPress} type="equals" className="bg-blue-600 text-white hover:bg-blue-700" ariaLabel="Equals" />
     </div>
   );
 };

@@ -31,7 +31,7 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
     <div 
       className={cn(
         "w-full max-w-xs md:max-w-sm rounded-2xl overflow-hidden shadow-calculator backdrop-blur-sm transition-all duration-300",
-        "animate-scale-in",
+        "animate-scale-in border border-gray-200",
         className
       )}
     >

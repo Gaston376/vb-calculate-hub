@@ -81,7 +81,7 @@
 @layer components {
   .calculator-key {
     @apply relative w-full h-14 md:h-16 flex items-center justify-center rounded-xl 
-    bg-white text-lg font-light transition-all duration-200 select-none cursor-pointer
+    text-lg transition-all duration-200 select-none cursor-pointer
     shadow-key hover:shadow-key-pressed active:shadow-key-pressed active:translate-y-[1px]
     outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
   }

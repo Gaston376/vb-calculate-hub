@@ -14,13 +14,13 @@ const CalculatorDisplay: React.FC<CalculatorDisplayProps> = ({
   className 
 }) => {
   return (
-    <div className={cn("calculator-display", className)}>
+    <div className={cn("calculator-display bg-gradient-to-r from-gray-100 to-gray-50", className)}>
       {expression && (
-        <div className="text-sm text-muted-foreground font-light mb-1 animate-fade-in overflow-x-auto whitespace-nowrap">
+        <div className="text-sm text-gray-600 font-medium mb-1 animate-fade-in overflow-x-auto whitespace-nowrap">
           {expression}
         </div>
       )}
-      <div className="text-3xl font-light overflow-x-auto whitespace-nowrap animate-slide-up">
+      <div className="text-3xl font-semibold text-gray-800 overflow-x-auto whitespace-nowrap animate-slide-up">
         {value}
       </div>
     </div>

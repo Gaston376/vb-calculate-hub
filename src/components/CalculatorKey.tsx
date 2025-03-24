@@ -28,7 +28,10 @@ const CalculatorKey: React.FC<CalculatorKeyProps> = ({
   return (
     <div
       className={cn(
-        "calculator-key",
+        "calculator-key relative flex items-center justify-center rounded-xl py-3",
+        "shadow-md transition-all duration-150 select-none cursor-pointer",
+        "font-medium text-lg hover:shadow-sm active:translate-y-[1px]",
+        "outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         type === "operator" && "bg-calculator-operator",
         type === "equals" && "bg-calculator-equals text-white hover:bg-calculator-equals-hover",
         type === "function" && "bg-secondary text-foreground/90",

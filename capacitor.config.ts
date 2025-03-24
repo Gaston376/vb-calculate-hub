@@ -6,14 +6,15 @@ const config: CapacitorConfig = {
   appName: 'GSS-TEC Calculator',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: true
   },
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
       backgroundColor: "#1A1D1F",
       showSpinner: true,
-      spinnerColor: "#8B5CF6",
+      spinnerColor: "#3B82F6",
       androidSplashResourceName: "splash"
     }
   },
