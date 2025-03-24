@@ -11,9 +11,18 @@ const config: CapacitorConfig = {
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: "#FFFFFF",
+      backgroundColor: "#1A1D1F",
       showSpinner: true,
       spinnerColor: "#8B5CF6",
+      androidSplashResourceName: "splash"
+    }
+  },
+  android: {
+    buildOptions: {
+      keystorePath: null,
+      keystorePassword: null,
+      keystoreAlias: null,
+      keystoreAliasPassword: null,
     }
   }
 };

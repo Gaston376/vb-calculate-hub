@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface CalculatorKeyProps {
   value: string;
   onClick: (value: string) => void;
-  type?: "number" | "operator" | "equals" | "function";
+  type?: "number" | "operator" | "equals" | "function" | "tab";
   className?: string;
   ariaLabel?: string;
 }
@@ -32,6 +32,7 @@ const CalculatorKey: React.FC<CalculatorKeyProps> = ({
         type === "operator" && "bg-calculator-operator",
         type === "equals" && "bg-calculator-equals text-white hover:bg-calculator-equals-hover",
         type === "function" && "bg-secondary text-foreground/90",
+        type === "tab" && "bg-gray-700 text-white hover:bg-gray-600",
         isPressed && "animate-key-press",
         className
       )}

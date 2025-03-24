@@ -3,7 +3,14 @@ import CalculatorDisplay from "@/components/CalculatorDisplay";
 import CalculatorKeypad from "@/components/CalculatorKeypad";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { calculateTrigFunction, calculateAdvancedFunction } from "@/utils/advancedMath";
+import { 
+  calculateTrigFunction, 
+  calculateAdvancedFunction, 
+  calculateStatFunction, 
+  convertUnit,
+  convertBase,
+  calculateLogicalOperation
+} from "@/utils/advancedMath";
 
 interface CalculatorProps {
   className?: string;
@@ -17,6 +24,9 @@ type CalculatorState = {
   previousValue: string | null;
   expression: string;
   isAdvancedMode: boolean;
+  advancedTab: string;
+  memory: number[];
+  base: number;
 };
 
 const Calculator: React.FC<CalculatorProps> = ({ className }) => {
@@ -27,17 +37,41 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
     waitingForOperand: false,
     previousValue: null,
     expression: "",
-    isAdvancedMode: false
+    isAdvancedMode: false,
+    advancedTab: "trig",
+    memory: [],
+    base: 10
   });
 
   const toggleAdvancedMode = () => {
     setState(prevState => ({
       ...prevState,
-      isAdvancedMode: !prevState.isAdvancedMode
+      isAdvancedMode: !prevState.isAdvancedMode,
+      advancedTab: "trig"
     }));
+    
+    if (!state.isAdvancedMode) {
+      toast.success("GSS-TEC Advanced Calculator", {
+        description: "Powerful scientific functions at your fingertips.",
+        duration: 3000
+      });
+    }
   };
 
   const handleKeyPress = (key: string) => {
+    if (key === "TRIG" || key === "STAT" || key === "CONV") {
+      setState({
+        ...state,
+        advancedTab: key.toLowerCase()
+      });
+      return;
+    }
+
+    if (key === "BASIC") {
+      toggleAdvancedMode();
+      return;
+    }
+
     switch (key) {
       case "0":
       case "1":
@@ -72,15 +106,15 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       case "%":
         inputPercent();
         break;
-      case "ADV":
-        toggleAdvancedMode();
-        break;
       case "sin":
       case "cos":
       case "tan":
       case "asin":
       case "acos":
       case "atan":
+      case "sinh":
+      case "cosh":
+      case "tanh":
         applyTrigFunction(key);
         break;
       case "sqrt":
@@ -89,8 +123,74 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       case "exp":
       case "pow2":
       case "pow3":
+      case "10^x":
       case "1/x":
+      case "abs":
+      case "fact":
         applyAdvancedFunction(key);
+        break;
+      case "π":
+        inputConstant(Math.PI);
+        break;
+      case "e":
+        inputConstant(Math.E);
+        break;
+      case "(":
+      case ")":
+        break;
+      case "DATA":
+        toast.info("Data entry mode", {
+          description: "Enter numbers separated by commas for statistical functions."
+        });
+        break;
+      case "mean":
+      case "median":
+      case "stdDev":
+      case "sum":
+        toast.info("Statistical functions require data entry", {
+          description: "Use DATA button to enter multiple values."
+        });
+        break;
+      case "km→mi":
+        performConversion("km", "mi");
+        break;
+      case "mi→km":
+        performConversion("mi", "km");
+        break;
+      case "m→ft":
+        performConversion("m", "ft");
+        break;
+      case "ft→m":
+        performConversion("ft", "m");
+        break;
+      case "kg→lb":
+        performConversion("kg", "lb");
+        break;
+      case "lb→kg":
+        performConversion("lb", "kg");
+        break;
+      case "C→F":
+        performConversion("C", "F");
+        break;
+      case "F→C":
+        performConversion("F", "C");
+        break;
+      case "BIN":
+        changeBase(2);
+        break;
+      case "HEX":
+        changeBase(16);
+        break;
+      case "OCT":
+        changeBase(8);
+        break;
+      case "AND":
+      case "OR":
+      case "XOR":
+      case "NOT":
+        toast.info("Logical operations", {
+          description: "Use binary numbers for logical operations."
+        });
         break;
       default:
         break;
@@ -266,7 +366,10 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       waitingForOperand: false,
       previousValue: null,
       expression: "",
-      isAdvancedMode: state.isAdvancedMode
+      isAdvancedMode: state.isAdvancedMode,
+      advancedTab: "trig",
+      memory: [],
+      base: 10
     });
   };
 
@@ -290,6 +393,15 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       ...state,
       displayValue: newValue.toString(),
       value: newValue.toString(),
+      waitingForOperand: false
+    });
+  };
+
+  const inputConstant = (value: number) => {
+    setState({
+      ...state,
+      displayValue: value.toString(),
+      value: value.toString(),
       waitingForOperand: false
     });
   };
@@ -336,15 +448,81 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       }
       
       const stringResult = result.toString();
+      const displayFunc = 
+        func === "pow2" ? "sqr" : 
+        func === "pow3" ? "cube" : 
+        func === "10^x" ? "10^" : func;
+        
       setState({
         ...state,
         displayValue: stringResult,
         value: stringResult,
         waitingForOperand: true,
-        expression: `${func === "pow2" ? "sqr" : func === "pow3" ? "cube" : func}(${displayValue}) = ${stringResult}`
+        expression: `${displayFunc}(${displayValue}) = ${stringResult}`
       });
     } catch (e) {
       toast.error("Invalid input for function");
+      setState({
+        ...state,
+        displayValue: "Error",
+        value: "Error",
+        waitingForOperand: true
+      });
+    }
+  };
+
+  const performConversion = (fromUnit: string, toUnit: string) => {
+    const { displayValue } = state;
+    const currentValue = parseFloat(displayValue);
+    
+    try {
+      const result = convertUnit(currentValue, fromUnit, toUnit);
+      
+      if (!isFinite(result)) {
+        throw new Error("Invalid conversion");
+      }
+      
+      const stringResult = result.toString();
+      setState({
+        ...state,
+        displayValue: stringResult,
+        value: stringResult,
+        waitingForOperand: true,
+        expression: `${currentValue} ${fromUnit} = ${stringResult} ${toUnit}`
+      });
+    } catch (e) {
+      toast.error("Invalid conversion");
+      setState({
+        ...state,
+        displayValue: "Error",
+        value: "Error",
+        waitingForOperand: true
+      });
+    }
+  };
+
+  const changeBase = (newBase: number) => {
+    const { displayValue, base } = state;
+    
+    try {
+      if (displayValue === "Error") return;
+      
+      const decimalValue = base === 10 
+        ? parseFloat(displayValue) 
+        : parseInt(displayValue, base);
+        
+      const result = convertBase(decimalValue.toString(), 10, newBase);
+      
+      setState({
+        ...state,
+        displayValue: result,
+        value: result,
+        base: newBase,
+        waitingForOperand: true,
+        expression: `${displayValue}_${base} = ${result}_${newBase}`
+      });
+    } catch (e) {
+      toast.error("Invalid base conversion");
       setState({
         ...state,
         displayValue: "Error",
@@ -403,6 +581,9 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
         className
       )}
     >
+      <div className="bg-calculator-header p-2 text-center text-md text-white font-medium">
+        GSS-TEC Advanced Calculator
+      </div>
       <CalculatorDisplay 
         value={state.displayValue} 
         expression={state.expression} 
@@ -410,7 +591,11 @@ const Calculator: React.FC<CalculatorProps> = ({ className }) => {
       <CalculatorKeypad 
         onKeyPress={handleKeyPress} 
         isAdvancedMode={state.isAdvancedMode}
+        advancedTab={state.advancedTab}
       />
+      <div className="bg-calculator-footer p-1 text-center text-xs text-white/70">
+        Developed by GSS-TEC
+      </div>
     </div>
   );
 };
